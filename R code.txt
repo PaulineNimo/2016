@@ -1,0 +1,56 @@
+#quiz 1
+rev=c(1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,
+1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006)
+gross.rev<-c(591,620,699,781,891,993,1111,1149,1301,1440,1661,1770,1856,
+1954,2023,2079,2146,2430,2746,3069,3649,4159,4686)
+plot(rev,gross.rev,main="Exponential trend model for Gross revenue",xlab="Time in years",ylab="wrigley co values")
+abline(lm(gross.rev~rev))
+model<-lm(gross.rev~rev)
+summary(model)
+plot(lm(log(gross.rev)~rev))
+plot(rev,log(gross.rev))
+
+
+#quiz 2(a)
+z<-c(1979:2006)
+rev<-c(838.7,964.0,875.0,1046.5,1258.6,1211.6,1546.7,1896.0,1938.8,2168.6,2753.2,
+2633.7,3168.8,3301.1,3754.1,3834.4,5117.1,6448.3,7908.3,9181.4,11497.1,10788.0,
+10021.5,8241.6,10453.9,10788.0,10717.5,12463.2)
+plot(z,rev,type="l",col="purple",main="DJIA Industrial Average",ylab="DJIA values",xlab="time in years")
+
+
+#quiz 2b:linear trend
+z<-c(1979:2006)
+rev<-c(838.7,964.0,875.0,1046.5,1258.6,1211.6,1546.7,1896.0,1938.8,2168.6,2753.2,
+2633.7,3168.8,3301.1,3754.1,3834.4,5117.1,6448.3,7908.3,9181.4,11497.1,10788.0,
+10021.5,8241.6,10453.9,10788.0,10717.5,12463.2)
+model<-lm(rev~z)
+summary(model)
+plot(lm(rev~z))
+plot(z,rev)
+
+
+#quiz 2c:quadratic trend model
+z<-c(1979:2006)
+rev<-c(838.7,964.0,875.0,1046.5,1258.6,1211.6,1546.7,1896.0,1938.8,2168.6,2753.2 ,
+2633.7,3168.8,3301.1,3754.1,3834.4,5117.1,6448.3,7908.3,9181.4,11497.1,10788.0,
+10021.5,8241.6,10453.9,10788.0,10717.5,12463.2)
+model<-lm(rev~z+z^2)
+summary(model)
+plot(z,rev,main="Quadratic trend model for DJIA",xlab="time",ylab="DJIA values")
+lines(z,rev)
+
+
+#quiz 2d:exponential trend model
+z<-c(1979:2006)
+rev<-c(838.7,964.0,875.0,1046.5,1258.6,1211.6,1546.7,1896.0,1938.8,2168.6,2753.2 ,
+2633.7,3168.8,3301.1,3754.1,3834.4,5117.1,6448.3,7908.3,9181.4,11497.1,10788.0,
+10021.5,8241.6,10453.9,10788.0,10717.5,12463.2)
+plot(z,rev,main="Exponential trend model for DJIA",xlab="Time(years)",ylab="DJIA values")
+abline(lm(rev~z),col="purple")
+model<-lm(rev~z)
+summary(model)
+lines(lm(100*log(rev)~z))
+lines(z,100*log(rev))
+lines(z+z^2,rev)
+lines(z,rev)

@@ -1,0 +1,138 @@
+---
+title: "RStudio Project using bfeed dataset"
+
+output: html_document
+---
+
+We will use the bfeed data set from the KMsurv library.
+
+First, we get a preview of the data set.
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+#Loading required packages
+library(survival)
+library(KMsurv)
+#Loading the data set
+data(bfeed)
+#Getting a preview
+head(bfeed)
+
+```
+
+We then make each column a variable and plot the survival and cumulative hazard functions;
+
+```{r,echo=FALSE}
+#Making the columns variables
+attach(bfeed)
+
+#Fitting a KM model
+Dur<-survfit(Surv(duration,delta)~1,type="kaplan-meier",conf.type="none")
+#Plotting the survival function
+plot(Dur,xlab="Time",ylab="Survival Probability",main="Survival and Cumulative Incidence Functions")
+#The Cumulative Incidence Function
+lines(Dur,fun="event",col=2,lty=2)
+legend("center",legend=c("Survival","Cumulative Incidence"),col=1:2,lty=1:2)
+#Plotting the haard function
+plot(Dur,xlab="Time",ylab="Cumulative Hazard",main="Cumulative Hazard Function",fun="cumhaz")
+
+```
+
+
+Fitting a Kaplan-Meier model to the duration data from women classified as 'Poverty' and 'Not Poverty' and plotting the result;
+
+```{r,echo=FALSE}
+#Fitting a KM model
+Dur.Pov<-survfit(Surv(duration,delta)~poverty,type="kaplan-meier",conf.type="none")
+#Plotting the curves
+plot(Dur.Pov,xlab="Time",ylab="Survival Functions",main="Kaplan-Meier Survival Function estimates",lty=1:2,col=1:2)
+#Inserting the legend
+legend("topright",legend=c("Poor","Not Poor"),lty=1:2,col=1:2)
+
+```
+
+
+
+Next, we compare two survival functions with a hypothesis test.
+
+The null hypothesis is that the survival function for poverty and not poverty are equal while the alternate hypothesis is that they are not equal. 
+
+Let our significance level be 0.05.
+
+```{r,echo=FALSE}
+#Performing a log-rank test
+survdiff(Surv(duration,delta)~poverty)
+
+```
+
+The p-value is 0.398 which is greater than the significance level. Therefore, we fail to reject the null hypothesis meaning that there isn't enough evidence to show that the two survival functions are not the same.
+
+
+# RStudio Project using graduate school admissions data
+
+
+We will examine graduate school admissions data, fit a predictive model and examine the parameters.
+
+```{r,echo=FALSE,message=FALSE}
+#Reading the data
+Grad.Adm<-read.csv("E:/R/Input/binary.csv")
+#Fitting a model and using binomial since admit is binomial
+the.model<-glm(admit~gre+gpa+rank,data=Grad.Adm,family="binomial")
+summary(the.model)
+
+```
+
+The parameter estimates are given in the Estimate column under Coefficients. Their significance has been performed with a z-test. The corresponding p-values are in the last column, Pr(>|z|). The null hypothesis for this is, the coefficients are not statistically significant and therefore are equal to zero. The alternative hypothesis is that they are not equal to zero hence statistically significant.
+
+We use a significance level of 0.05. All p-values are less than the significance level indicating that we reject the null hypothesis thus all coefficients are statistically significant.
+
+gre and admit are directly proportional such that a unit increase in gre results in an increase in the log likelihood of admission by 0.002294.
+
+gpa and admit are also directly proportional. A unit increase in gpa results in an increase in the log likelihood of admission by 0.777014.
+
+An increase in velue of rank (meaning reduction in prestige for undergraduate institution) results in a decrease in log likelihood of admission by 0.560031.
+
+
+Calculating the confidence intervals for the parameters using both log odds and parameter space;
+
+Using log likelihood;
+
+```{r,echo=FALSE,message=FALSE}
+#Confidence Interval using log odds
+confint(the.model)
+```
+
+Using the parameter space;
+
+```{r,echo=FALSE,message=FALSE}
+#Confidence interval using parameter space
+confint.default(the.model)
+
+```
+
+
+Testing the overall effect of rank on admission: the null hypothesis is that rank has no effect on admission and the alternate hypothesis is that rank has an effect on admission.
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+library(aod)
+wald.test(vcov(the.model),coef(the.model),4)
+
+```
+
+We use a significance level of 0.05. The p-value is less than 0.05 therefore we reject the null hypothesis meaning that rank has an effect on admissions.
+
+Generating the new data set;
+
+```{r,echo=FALSE}
+#Creating a data frame with column mean per rank
+New.Grd.Adm<-data.frame(gre=mean(Grad.Adm$gre),gpa=mean(Grad.Adm$gpa),rank=1:4)
+New.Grd.Adm
+
+#Creating a new column and predicting values of rank
+New.Grd.Adm$Pred.Rank<-predict(the.model,newdata=New.Grd.Adm,type="response")
+New.Grd.Adm
+```
+
+The above output shows that holding the gre and gpa varibales constant as their respective means, the rank of the undergraduate institution has an effect on the admission to graduate school. 
+
+Those from prestigious undergraduate institutions have a higher probability of 49.31451% of admission while those from the least prestigious undergraduate institutions have the lowest probability of admission of 15.34862%.
+

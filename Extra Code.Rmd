@@ -1,0 +1,245 @@
+---
+title: "Extra Code"
+output: html_document
+date: "17 March 2016"
+---
+
+```{r, label = "SETUP", echo = FALSE, results= 'hide', message = FALSE, warning = FALSE}
+set.seed(123)
+library(knitr)
+library(ISLR)
+knitr::opts_chunk$set(comment = NA, fig.align = 'center', fig.height = 5, fig.width = 5,  warning = FALSE, message = FALSE, tidy.opts=list(blank = TRUE, width.cutoff = 75))
+```
+
+
+1. Why is linear regression important to understand? Select all that apply:
+
+* ~~The linear model is often correct.~~
+
+* **Linear regression is very extensible and can be used to capture nonlinear effects.** 
+
+* **Simple methods can outperform more complex ones if the data are noisy.**
+
+* ~~Understanding simpler methods sheds light on more complex ones.~~
+
+
+
+
+2. You may want to reread the paragraph on confidence intervals on page 66 of the textbook before trying this question (the distinctions are subtle).  Which of the following are true statements? Select all that apply:
+
+* ~~A 95% confidence interval formula is a random interval that is expected to contain the true parameter 95% of the time.~~ 
+
+*  ~~The true parameter is a random value that has 95% chance of falling in the 95% confidence interval.~~
+
+*  **I perform a linear regression and get a 95% confidence interval from 0.4 to 0.5. There is a 95% probability that the true parameter is between 0.4 and 0.5.**
+
+* **The true parameter (unknown to me) is 0.5. If I repeatedly sample data and construct 95% confidence intervals, the intervals will contain 0.5 approximately 95% of the time.**
+
+
+\pagebreak
+
+3.  We run a linear regression and the slope estimate is 0.5 with estimated standard error of 0.2. What is the largest value of $b$ for which we would NOT reject the null hypothesis that $\beta_1=b$? 
+
+
+a.  Assume a normal approximation to the $t$ distribution, and that we are using the 5% significance level for a two-sided test; use two significant digits of accuracy.
+
+```{r,echo=FALSE}
+
+up.lim<-0.5+(qnorm(0.975)*0.2)
+
+signif(up.lim,digits=2)
+
+```
+
+
+
+b.  Use a $t$ distribution with 10 degrees of freedom, and assume that we are using the 5% significance level for a two-sided test; use two significant digits of accuracy.
+
+
+```{r.echo=FALSE}
+up.lim2<-0.5+(qt(0.975,df=10)*0.2)
+
+signif(up.lim2,digits=2)
+
+```
+
+
+
+4. Which of the following indicates a fairly strong relationship between $X$ and $Y$?
+
+* ~~R^2 = 0.9~~
+
+* **The p-value for the null hypothesis $\beta_1 = 0$ is 0.0001.**
+
+* **The t-statistic for the null hypothesis $\beta_1 = 0$ is 30.**
+
+
+\pagebreak
+
+5. Given the following: 
+
+```{r}
+site <- "http://www-bcf.usc.edu/~gareth/ISL/Credit.csv"
+Credit <- read.csv(file = site)
+str(Credit)
+ModEthnic <- lm(Balance ~ Ethnicity, data = Credit)
+summary(ModEthnic)
+```
+
+```{r, echo = FALSE, results='hide'}
+b0 <- coef(summary(ModEthnic))[1, 1]
+b1 <- coef(summary(ModEthnic))[2, 1]
+b2 <- coef(summary(ModEthnic))[3, 1]
+c(b0, b1, b2)
+```
+
+\pagebreak
+
+a. According to the balance vs ethnicity model (`ModEthnic`), what is the predicted balance for an Asian in the data set? (within 0.01 accuracy)
+
+```{r,echo=FALSE}
+round(b0+b1,digits=2)
+
+```
+
+
+
+b. What is the predicted balance for an African American? (within .01 accuracy)
+
+```{r,echo=FALSE}
+round(b0+b2,digits=2)
+
+```
+
+
+
+c. Construct a 90% confidence interval for the average credit card balance for Asians.
+
+```{r,echo=FALSE}
+confint(ModEthnic,parm="EthnicityAsian",level=0.9)
+
+```
+
+
+d. Construct a 92% prediction interval for Joe's (who is African American) credit card balance.
+
+```{r,echo=FALSE}
+Afr.Ame.DF<-data.frame(Ethnicity="African American")
+predict(ModEthnic,newdata=Afr.Ame.DF,interval="prediction",level=0.92)
+
+```
+
+
+\pagebreak
+
+6. Given the following:
+
+```{r}
+mod <- lm(Rating ~ poly(Limit, 2, raw = TRUE) + poly(Cards, 2, raw = TRUE) + 
+            Married + Student + Education, data = Credit)
+summary(mod)
+```
+
+
+  a. Use `mod` to predict the `Rating` for an individual that has a credit card limit of $6,000, has 4 credit cards, is married, and is not a student, and has an undergraduate degree (`Education` = 16).
+  
+```{r,echo=FALSE}
+DF<-data.frame(Limit=6000,Cards=4,Married="Yes",Student="No",Education=16)
+DF$Pred.Rating<-predict(mod,newdata=DF,level=0.95,type="response")
+
+DF$Pred.Rating
+```
+
+  
+  b. Use `mod` to predict the `Rating` for an individual that has a credit card limit of
+$12,000, has 2 credit cards, is married, is not a student, and has an eighth grade education (`Education` = 8).
+
+```{r,echo=FALSE}
+DF1<-data.frame(Limit=12000,Cards=2,Married="Yes",Student="No",Education=8)
+DF1$Pred.Rating<-predict(mod,newdata=DF1,level=0.95,type="response")
+
+DF1$Pred.Rating
+
+```
+
+
+
+  c . Construct and interpret a 90% confidence interval for $\beta_5$ (a married person).
+
+```{r,echo=FALSE}
+confint(mod,"MarriedYes",level=0.9)
+
+```
+
+
+\pagebreak
+
+7. Given the following:
+
+```{r}
+site <- "http://www-bcf.usc.edu/~gareth/ISL/Advertising.csv"
+Advertising <- read.csv(file = site)
+str(Advertising)
+modSales <- lm(Sales ~ TV + Radio + TV:Radio, data = Advertising)
+summary(modSales)
+coef(modSales)
+```
+
+
+a. According to the model for sales vs TV interacted with radio (`modSales`), what is the effect of an additional 1 unit of radio advertising if TV = 25? (with 4 decimal accuracy)
+
+```{r,echo=FALSE}
+coefs<-coef(modSales)
+coef.radio<-coefs[3]+(coefs[4]*25)
+
+round(coef.radio,digits=4)
+```
+
+For a unit change in Radio advertising, the Sales increase by 0.056 units when TV=25.
+
+b.  What if TV = 300? (with 4 decimal accuracy)
+
+```{r,echo=FALSE}
+coef.radio2<-coefs[3]+(coefs[4]*300)
+
+round(coef.radio2,digits=4)
+```
+
+For a unit change in Radio advertising, the Sales increase by 0.3548 units when TV=300.
+
+
+
+8.  What is the difference between `lm(y ~ x*z)` and `lm(y ~ I(x*z))`, when `x` and `z` are both numeric variables?
+
+*  **The first one includes an interaction term between `x` and `z`, whereas the second uses the product of `x` and `z` as a predictor in the model.** 
+
+* ~~The second one includes an interaction term between `x` and `z`, whereas the first uses the product of `x` and `z` as a predictor in the model.~~  
+
+* ~~The first includes only an interaction term for `x` and `z`, while the second includes both interaction effects and main effects.~~  
+
+* ~~The second includes only an interaction term for `x` and `z`, while the first includes both interaction effects and main effects.~~
+
+
+\pagebreak
+
+9. Given the following model:
+
+```{r, fig.height = 3, fig.width = 5}
+modBalance <- lm(balance ~ student + income + student:income, data = Default)
+library(ggplot2)
+ggplot(data = Default, aes(x = income, y = balance, color = student)) + 
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  theme_bw()
+```
+
+Which of the following statements are true?
+
+* **In the `modBalance` model, the estimate of $\beta_3$ is negative.** 
+
+*  ~~One advantage of using linear models is that the true regression function is often linear.~~  
+
+*  ~~If the F statistic is significant, all of the predictors have statistically significant effects.~~  
+
+*  **In a linear regression with several variables, a variable has a positive regression coefficient if and only if its correlation with the response is positive.**
+
+

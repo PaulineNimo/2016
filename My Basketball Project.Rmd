@@ -1,0 +1,133 @@
+---
+title: "My Basketball Project"
+author: "Kate"
+date: "11 February 2016"
+output: html_document
+---
+
+We aim to look at how performance of an NBA player affects their salary. 
+
+Loading 4 datasets into R and getting a preview;
+
+The first;
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+#Loading data into R
+library(xlsx)
+dataset1<-read.xlsx("E:/R/Input/my basketball project.xlsx",5)
+#Showing first five rows of variables
+dataset1[1:5,4:10]
+
+```
+
+The second;
+
+```{r,echo=FALSE}
+#Loading data into R
+dataset2<-read.xlsx("E:/R/Input/my basketball project.xlsx",7)
+#Showing first five rows of variables
+dataset2[1:5,4:10]
+
+```
+
+The third;
+
+```{r,echo=FALSE}
+#Loading data into R
+dataset3<-read.xlsx("E:/R/Input/my basketball project.xlsx",9)
+#Showing first five rows of variables
+dataset3[1:5,4:10]
+
+```
+
+The fourth;
+
+```{r,echo=FALSE}
+#Loading data into R
+dataset4<-read.xlsx("E:/R/Input/my basketball project.xlsx",11)
+#Showing first five rows of variables
+dataset4[1:5,4:10]
+
+```
+
+
+The null hypothesis is higher paid players have better performance than lower paid players.
+
+We begin with the first dataset. Fitting the first model;
+```{r, echo=FALSE}
+#Fitting the model
+modelfit1<-lm(Salary~PTS.G+RB.G+AST.G+STL.G+BLK.G+TOV.G,data=dataset1)
+#Anova table
+anova(modelfit1)
+#Displaying the model
+summary(modelfit1)
+
+```
+
+Plotting the model gives;
+
+```{r,echo=FALSE}
+
+#Plotting the model
+plot(modelfit1)
+
+```
+
+Fitting the second model;
+```{r,echo=FALSE}
+#Fitting the model
+modelfit2<-lm(Salary~PTS.G+RB.G+AST.G+STL.G+BLK.G+TOV.G,data=dataset2)
+#Anova table
+anova(modelfit2)
+#Displaying the model
+summary(modelfit2)
+
+```
+
+Plotting the model gives;
+
+```{r,echo=FALSE}
+
+#Plotting the model
+plot(modelfit2)
+```
+
+Fitting the third model;
+```{r,echo=FALSE}
+#Fitting the model
+modelfit3<-lm(Salary~PTS.G+RB.G+AST.G+STL.G+BLK.G+TOV.G,data=dataset3)
+#Anova table
+anova(modelfit3)
+#Displaying the model
+summary(modelfit3)
+
+```
+
+Plotting the model gives;
+
+```{r,echo=FALSE}
+
+#Plotting the model
+plot(modelfit3)
+```
+
+Fitting the fourth model;
+```{r,echo=FALSE}
+#Fitting the model
+modelfit4<-lm(Salary~PTS.G+RB.G+AST.G+STL.G+BLK.G+TOV.G,data=dataset4)
+#Anova table
+anova(modelfit4)
+#Displaying the model
+summary(modelfit4)
+
+```
+
+Plotting the model gives;
+
+```{r,echo=FALSE}
+
+#Plotting the model
+plot(modelfit4)
+
+```
+
